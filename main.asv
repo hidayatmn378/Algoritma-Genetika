@@ -1,0 +1,103 @@
+clear
+clc
+
+target = 'wiro sableng'
+
+jumlah_populasi = 4;
+laju_mutasi = 0.1;
+populasi = create_population(target,jumlah_populasi);
+islooping = true
+generasi = 0;
+%langkah terakhir adalah looping proses2 yg terjadi
+%selection - crossover - mutation - regeneration
+%pakai while , for loop tidak bisa karena for loop adalah looping yg
+%berhenti pada suatu titik yg telah ditentukan
+%tapi dalam program ini belum diketahui kapan proses selesai
+
+while islooping
+    %seleksi
+    [parent1,parent2] = selection(populasi);
+
+    %crossover
+    [child1,child2] = crossover(parent1,parent2);
+
+    %mutasi
+    mutant1 = mutation(child1,laju_mutasi);
+    mutant2 = mutation(child2,laju_mutasi);
+
+    %hitung fitness mutant
+    mutant1.fitness = calculate_fitness(mutant1.gen,target);
+    mutant2.fitness = calculate_fitness(mutant2.gen,target);
+
+    %regenerasi (mirip selection)
+    %calon anggota
+    children = [mutant1,mutant2];
+%     new_populasi = regeneration(children,populasi)
+    populasi = regeneration(children,populasi);
+    %agar bisa looping terus new_populasi harus diubah jadi populasi
+%     populasi.fitness    %melihat finalisasi dapat 100
+    generasi = generasi + 1;
+    [islooping,solusi] = termination(populasi)
+    logging(populasi,target,solusi,generasi)
+%     islooping = false;
+end
+
+function logging(populasi,target,solusi,generasi)
+    clc
+    fprintf('target ; %s \n',target)
+    fprintf('solusi ; %s \n',solusi.gen)
+    fprintf('generasi ; %d \n',generasi)
+    
+    for i = 1:length(populasi)
+        fprintf('target ; %s \n',target)
+    end
+end
+%cek
+% while true
+% disp('hallo')
+% end
+
+
+
+%%
+% %tujuan dari program ini adalah membuat sebuah program
+% %dengan menggunakan algoritma genetika untuk mendekati nilai dari target
+% 
+%  target = 'wiro sableng';    %bertipe char (cek whos)
+%  %mulai dari buat char yang random
+%  %char random dapat dibuat melalui random number (ascii) kemudian dikonversi
+%  
+%  panjang_target = length(target);
+%  random_number = randi([32 126],1,panjang_target);  %randi random integer
+%  gen = char(random_number)  %konversi menjadi char
+%  
+%  %selanjutnya dihitung fitness value dari gen, bagus atau tidak (tingkat kecocokan)
+%  fitness = (sum(target == gen)/panjang_target) * 100
+%   
+% 
+%  %representasi genetik
+%  
+%  %fitness function
+
+%%
+%dibuat menjadi fungsi supaya rapi
+%dan dibuatkan file tersendiri
+
+% target = 'wiro sableng'
+% panjang_target = length(target);
+% 
+% gen_baru = create_gen(panjang_target)
+% fitness = calculate_fitness(gen_baru,target)
+% 
+% %representasi gen
+% function gen = create_gen(panjang_gen)
+%     random_number = randi([32 126],1,panjang_gen);
+%     gen = char(random_number);
+% end
+% 
+% %fitness function
+% function fitness = calculate_fitness(gen,target)
+%     fitness = (sum(target == gen)/length(target)) * 100;
+% end
+
+%buat populasi dengan menggunakan struct
